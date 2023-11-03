@@ -75,6 +75,7 @@ int main()
         {
             cout << getNum(matrix, i, j) << " ";
         }
+         cout << std::endl;
     }
 
     return 0;
