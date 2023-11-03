@@ -1,11 +1,12 @@
 #include <iostream>
 using namespace std;
+// Structure of sparse 
 struct SparseMat
 {
     int rows, cols, count;
     int **values;
 };
-
+// Declare and initialize sparsematrix and return sparse matrix
 SparseMat getSparseMat()
 {
     int rows, cols;
@@ -18,13 +19,13 @@ SparseMat getSparseMat()
     matrix.cols = cols;
     matrix.count = 0;
 
-    
     matrix.values = new int *[rows * cols];
     for (int i = 0; i < rows * cols; i++)
     {
+        // create array to store non zero value 
         matrix.values[i] = new int[3]; 
     }
-
+//return matrix
     return matrix;
 }
 
@@ -38,7 +39,7 @@ void addNum(SparseMat &matrix, int row, int col, int num)
         matrix.count++;
     }
 }
-
+// return number at a position
 int getNum(SparseMat &matrix, int row, int col)
 {
     int val = 0;
