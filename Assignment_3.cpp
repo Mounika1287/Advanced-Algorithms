@@ -1,101 +1,90 @@
 #include <iostream>
 #include <stdexcept>
 
-class Node {
+using namespace std;
+//class Element as an element in sparse matrix
+class Element {
 public:
-    int value;
+    int value; 
     int row;
     int col;
-    Node* next;
-
-    Node(int val, int r, int c) : value(val), row(r), col(c), next(nullptr) {}
+    Element* next;
+//constructor
+    Element(int val, int rowNo, int column){
+        value = val;
+        row   = rowNo;
+        col   = column; 
+        next  = nullptr;
+    }
 };
 
-class SparseMatrix {
+class Matrix {
 private:
     int rows;
     int cols;
-    Node** heads;
-
+    Element** head;
+//constructor to  initialize values
 public:
-    SparseMatrix(int r, int c) : rows(r), cols(c) {
-        heads = new Node*[rows]();
+    Matrix(int row, int column){
+        rows = row;
+        cols = column;
+        head = new Element*[rows]();
     }
 
-    void insert(int value, int row, int col) {
-        if (row < 0 || row >= rows || col < 0 || col >= cols) {
-            throw std::out_of_range("Row or column index out of bounds");
-        }
-
-        Node* new_node = new Node(value, row, col);
-        if (!heads[row]) {
-            heads[row] = new_node;
-        } else {
-            Node* current = heads[row];
+void AddElement(int value, int row, int col) {
+    Element* new_Element = new Element(value, row, col);
+     //If first Node
+     if (!head[row]) {
+            head[row] = new_Element;
+      } else { //Add node at the end of the list
+            Element* current = head[row];
             while (current->next) {
                 current = current->next;
             }
-            current->next = new_node;
+            current->next = new_Element; 
         }
     }
 
-    int get(int row, int col) {
-        if (row < 0 || row >= rows || col < 0 || col >= cols) {
-            throw std::out_of_range("Row or column index out of bounds");
-        }
-
-        Node* current = heads[row];
-        while (current) {
-            if (current->col == col) {
-                return current->value;
-            }
-            current = current->next;
-        }
-        return 0;  // Return 0 for elements not explicitly set
-    }
-
-    void display() {
+    void PrintMatrix() {
         for (int row = 0; row < rows; ++row) {
-            Node* current = heads[row];
-            int row_values[cols] = {0};
+            Element* current = head[row];
+            int rowElements[cols] = {0};
+            //collect all rows into row elements into rowElements
             while (current) {
-                row_values[current->col] = current->value;
+                rowElements[current->col] = current->value;
                 current = current->next;
             }
+            //print all collected elements
             for (int col = 0; col < cols; ++col) {
-                std::cout << row_values[col] << " ";
+                cout << rowElements[col] << " ";
             }
-            std::cout << std::endl;
+            cout << std::endl;
         }
     }
 };
 
 int main() {
     int rows, cols;
-    std::cout << "Enter the number of rows: ";
-    std::cin >> rows;
-    std::cout << "Enter the number of columns: ";
-    std::cin >> cols;
+    cout << "Enter no of rows: ";
+    cin >> rows;
+    cout << "Enter no of columns: ";
+    cin >> cols;
 
-    SparseMatrix matrix(rows, cols);
+    Matrix matrix(rows, cols);
 
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
             int value;
-            std::cout << "Enter value at row " << i << " and column " << j << ": ";
-            std::cin >> value;
-            matrix.insert(value, i, j);
+            cout << "Enter the value at row " << i << " and column " << j << ": ";
+            cin >> value;
+            if (value !=0){
+                matrix.AddElement(value, i, j);
+            }
         }
     }
 
-    std::cout << "Sparse Matrix:\n";
-    matrix.display();
-
-    int search_row, search_col;
-    std::cout << "Enter the row and column to retrieve a value: ";
-    std::cin >> search_row >> search_col;
-    int result = matrix.get(search_row, search_col);
-    std::cout << "Value at (" << search_row << ", " << search_col << ") is " << result << std::endl;
+    cout << "-----------Sparse Matrix-----------\n";
+    matrix.PrintMatrix();
 
     return 0;
 }
