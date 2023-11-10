@@ -1,82 +1,91 @@
 #include <iostream>
+#include <stdexcept>
+
 using namespace std;
-// Structure of sparse 
-struct SparseMat
-{
-    int rows, cols, count;
-    int **values;
+//class Element as an element in sparse matrix
+class Element {
+public:
+    int value; 
+    int row;
+    int col;
+    Element* next;
+//constructor
+    Element(int val, int rowNo, int column){
+        value = val;
+        row   = rowNo;
+        col   = column; 
+        next  = nullptr;
+    }
 };
-// Declare and initialize sparsematrix and return sparse matrix
-SparseMat getSparseMat()
-{
-    int rows, cols;
-    cout << "Total number of rows: ";
-    cin >> rows;
-    cout << "Total the number of columns: ";
-    cin >> cols;
-    SparseMat matrix;
-    matrix.rows = rows;
-    matrix.cols = cols;
-    matrix.count = 0;
 
-    matrix.values = new int *[rows * cols];
-    for (int i = 0; i < rows * cols; i++)
-    {
-        // create array to store non zero value 
-        matrix.values[i] = new int[3]; 
+class Matrix {
+private:
+    int maxRows;
+    int maxCols;
+    Element** head;
+//constructor
+public:
+    Matrix(int row, int column){
+        maxRows = row;
+        maxCols = column;
+        head = new Element*[maxRows]();
     }
-//return matrix
-    return matrix;
-}
 
-void addNum(SparseMat &matrix, int row, int col, int num)
-{
-    if (num != 0)
-    {
-        matrix.values[matrix.count][0] = row;
-        matrix.values[matrix.count][1] = col;
-        matrix.values[matrix.count][2] = num;
-        matrix.count++;
-    }
-}
-// return number at a position
-int getNum(SparseMat &matrix, int row, int col)
-{
-    int val = 0;
-    for (int i = 0; i < matrix.count; i++)
-    {
-        if (matrix.values[i][0] == row && matrix.values[i][1] == col)
-        {
-            return matrix.values[i][2];
+    void AddElement(int value, int row, int col) {
+
+        Element* new_Element = new Element(value, row, col);
+        //If first Node
+        if (head[row]) {
+            Element* current = head[row];
+            while (current->next) {
+                current = current->next;
+            }
+            current->next = new_Element; 
+        } else { //Add node at the end of the list
+            head[row] = new_Element;
         }
     }
-    return 0; 
-}
 
-int main()
-{
-    SparseMat matrix = getSparseMat();
+    void PrintMatrix() {
+        for (int row = 0; row < maxRows; ++row) {
+            Element* current = head[row];
+            int rowElements[maxCols] = {0};
+            //collect all maxRows into row elements into rowElements
+            while (current) {
+                rowElements[current->col] = current->value;
+                current = current->next;
+            }
+            //print all collected elements
+            for (int col = 0; col < maxCols; ++col) {
+                cout << rowElements[col] << " ";
+            }
+            cout << endl;
+        }
+    }
+};
 
-    for (int i = 0; i < matrix.rows; i++)
-    {
-        for (int j = 0; j < matrix.cols; j++)
-        {
+int main() {
+    int maxRows, maxCols;
+    cout << "Enter no of rows: ";
+    cin >> maxRows;
+    cout << "Enter no of columns: ";
+    cin >> maxCols;
+
+    Matrix matrix(maxRows, maxCols);
+
+    for (int i = 0; i < maxRows; i++) {
+        for (int j = 0; j < maxCols; j++) {
             int value;
-            cout << "Enter value at row " << i << " and column " << j << ": ";
+            cout << "Enter the value at row " << i << " and column " << j << ": ";
             cin >> value;
-            addNum(matrix, i, j, value);
+            if (value !=0){
+                matrix.AddElement(value, i, j);
+            }
         }
     }
 
-    cout << "Sparse Matrix:" << std::endl;
-    for (int i = 0; i < matrix.rows; i++)
-    {
-        for (int j = 0; j < matrix.cols; j++)
-        {
-            cout << getNum(matrix, i, j) << " ";
-        }
-         cout << std::endl;
-    }
+    cout << "-----------Sparse Matrix-----------\n";
+    matrix.PrintMatrix();
 
     return 0;
 }
