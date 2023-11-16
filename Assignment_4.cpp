@@ -86,7 +86,7 @@ int main() {
     }
 
     vector<vector<pair<int, int>>> graph_ds(num_of_Nodes);
-  cout << "If there is no connection enter -ve number:\n ";
+  cout << "If there is no connection between nodes enter -999:\n ";
  
     // Letting the user to enter the weights between nodes
     for (int node1 = 0; node1 < num_of_Nodes; ++node1) {
@@ -96,7 +96,7 @@ int main() {
             cout << "Enter weight from node " << node1 << " to " << node2 << ": ";
             cin >> weight_in_between;
 
-            if (weight_in_between < 0) {
+            if (weight_in_between < -999) {
                 continue;
             }
 
