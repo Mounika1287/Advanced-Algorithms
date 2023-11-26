@@ -3,61 +3,62 @@
 #include <algorithm>
 using namespace std;
 
-// Function to print the vector
-string longestSubstring(string s1, string s2) {
-    int string1_length = s1.size();
-    int string2_length = s2.size();
-    vector<vector<int>> lookup_table(string1_length+1, vector<int>(string2_length+1, 0)); //
-    int maximum_length = 0;
-    int end_position = 0;
+// Function to find longest common substring
+string longestSubstring(string str1, string str2) {
+    int l1 = str1.size();
+    int l2 = str2.size();
+    vector<vector<int>> table(l1+1, vector<int>(l2+1, 0)); //
+    int max_len = 0;
+    int ep = 0;
 
-    // Filling the lookup table
-    for (int i = 1; i <= string1_length; i++) {
-        for (int j = 1; j <= string2_length; j++) {
-            if (s1[i-1] == s2[j-1]) {
-                lookup_table[i][j] = lookup_table[i-1][j-1] + 1;
-                if (lookup_table[i][j] > maximum_length) {
-                    maximum_length = lookup_table[i][j];
-                    end_position = i - 1;
+    // build dp table 
+    for (int i = 1; i <= l1; i++) {
+        for (int j = 1; j <= l2; j++) {
+            if (str1[i-1] == str2[j-1]) {
+                table[i][j] = table[i-1][j-1] + 1;
+                if (table[i][j] > max_len) {
+                    max_len = table[i][j];
+                    ep = i - 1;
                 }
             }
         }
     }
 
-    // Print the lookup table
+    //print table
     cout << "------------Lookup Table:--------------- " << endl;
     cout << "    ";
-    for (int j = 0; j < string2_length; j++) {
-        cout << s2[j] << " ";
+    for (int j = 0; j < l2; j++) {
+        cout << str2[j] << " ";
     }
     cout << endl;
-    for (int i = 0; i <= string1_length; i++) {
-        if (i > 0) {
-            cout << s1[i-1] << " ";
+    for (int i = 0; i <= l1; i++) {
+        if (i <= 0) {
+               cout << "  ";    
         } else {
-            cout << "  ";
+
+            cout << str1[i-1] << " ";
         }
-        for (int j = 0; j <= string2_length; j++) {
-            cout << lookup_table[i][j] << " ";
+        for (int j = 0; j <= l2; j++) {
+            cout << table[i][j] << " ";
         }
         cout << endl;
     }
 
-    // Print the length of the longest common substring
-    cout << "The Length of the largest common substring: " << maximum_length << endl;
 
-    return s1.substr(end_position - maximum_length + 1, maximum_length); // return the longest common substring
+    cout << "The Length of the largest common substring: " << max_len << endl;
+
+    return str1.substr(ep - max_len + 1, max_len); // return the longest common substring
 }
 
 // Defining the main function
 int main() {
-    string s1, s2;
+    string str1, str2;
     cout << "Please Enter first string: ";
     
-    std::getline(std::cin, s1);
+    std::getline(std::cin, str1);
     cout << "Please Enter second string: ";
-    std::getline(std::cin, s2);
-    string longest_common_substring = longestSubstring(s1, s2); // Calling the longestSubstring function
-    cout << "The Longest Common Substring: " << longest_common_substring << endl;
+    std::getline(std::cin, str2);
+    string lcs = longestSubstring(str1, str2); // find lcs
+    cout << "The Longest Common Substring: " << lcs << endl;
     return 0;
 }
