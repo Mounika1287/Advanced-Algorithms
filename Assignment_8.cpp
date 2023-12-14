@@ -105,13 +105,13 @@ std::string hashToHexString(const std::vector<uint32_t>& hash) {
 std::string fetchContent(const std::string& host, const std::string& path) {
     int sock_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (sock_fd < 0) {
-        std::cerr << "Error opening socket" << std::endl;
+        std::cerr << "Error.....! Unable to open Socket" << std::endl;
         return "";
     }
 
     struct hostent* server_get = gethostbyname(host.c_str());
     if (server_get == nullptr) {
-        std::cerr << "Error, no such host" << std::endl;
+        std::cerr << "Error.....!, No such host exists" << std::endl;
         return "";
     }
 
@@ -122,13 +122,13 @@ std::string fetchContent(const std::string& host, const std::string& path) {
     std::memcpy(&serverAddress_value.sin_addr.s_addr, server_get->h_addr, server_get->h_length);
 
     if (connect(sock_fd, (struct sockaddr*)&serverAddress_value, sizeof(serverAddress_value)) < 0) {
-        std::cerr << "Error connecting" << std::endl;
+        std::cerr << "Error...! While connecting" << std::endl;
         return "";
     }
 
     std::string request = "GET " + path + " HTTP/1.1\r\nHost: " + host + "\r\nConnection: close\r\n\r\n";
     if (send(sock_fd, request.c_str(), request.length(), 0) < 0) {
-        std::cerr << "Error sending request" << std::endl;
+        std::cerr << "Error.....! While sending request" << std::endl;
         return "";
     }
 
@@ -145,19 +145,17 @@ std::string fetchContent(const std::string& host, const std::string& path) {
 }
 
 int main() {
-    // Example usage
+    
     std::string host_taken = "quod.lib.umich.edu";
-    // std::string host_taken = "en.wikipedia.org";
     std::string path_taken = "/cgi/r/rsv/rsv-idx?type=DIV1&byte=4697892";
-    // std::string path_taken = "/wiki/Wiki";
     std::string content_received = fetchContent(host_taken, path_taken);
 
     if (!content_received.empty()) {
         std::vector<uint32_t> hash_value = sha256(content_received);
         std::string hashedResult_value = hashToHexString(hash_value);
-        std::cout << "Hashed content: " << hashedResult_value << std::endl;
+        std::cout << "Hashed content of the source text: " << hashedResult_value << std::endl;
     } else {
-        std::cerr << "Unable to fetch content from the URL" << std::endl;
+        std::cerr << "Error in fetching the content from URL" << std::endl;
     }
 
     return 0;
